@@ -124,7 +124,7 @@ with t1:
             hojas = f" · {int(r['paginas'])} hojas" if pd.notna(r["paginas"]) else ""
             st.write(f"**{MONEDA}{r['precio']:.2f}**{hojas}")
             with st.expander("Comprar"):
-                if r["qr"] and os.path.exists(r["qr"]):
+                if pd.notna(r["qr"]) and os.path.exists(r["qr"]):
                     st.image(r["qr"], caption="Si pagas por QR, escanea este código "
                              "(toca la imagen para ampliarla)", width=340)
                 with st.form(f"compra{r['id']}"):
@@ -200,8 +200,8 @@ with t3:
             with st.container(border=True):
                 st.write(f"**{r['titulo']}** · {MONEDA}{r['monto']:.2f} · {r['metodo']}")
                 st.write(f"Estado: **{r['estado']}** · {r['fecha']}")
-                if r["estado"] == "Pagado" and r["archivo"] and os.path.exists(r["archivo"]):
-                    with open(r["archivo"], "rb") as f:
+                if r["estado"] == "Pagado" and pd.notna(r["archivo"]) and os.path.exists(r["archivo"]):
+                   with open(r["archivo"], "rb") as f:
                         st.download_button("⬇️ Descargar apunte", f.read(),
                                            file_name=os.path.basename(r["archivo"]),
                                            key=f"dl{r['id']}")
@@ -250,7 +250,7 @@ with t5:
             with st.container(border=True):
                 st.write(f"**{r['titulo']}** · {r['comprador']} ({r['tel_comprador']}) · "
                          f"{MONEDA}{r['monto']:.2f} · {r['metodo']}")
-                if r["comprobante"] and os.path.exists(r["comprobante"]):
+                if pd.notna(r["comprobante"]) and os.path.exists(r["comprobante"]):
                     st.image(r["comprobante"], width=200)
                 if st.button("✅ Confirmar pago", key=f"ok{r['id']}"):
                     ejecutar("UPDATE ventas SET estado='Pagado' WHERE id=?", (int(r["id"]),))
